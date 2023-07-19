@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Online Exam System</string>
+    <string name="login_title">DeGS Narmdadapuram </string>
+    <string name="email_hint">Please Enter Email</string>
+    <string name="password_hint">Please Enter Password</string>
+    <string name="login_button_title">Login</string>
+    <string name="forget_password">Forget Password ?</string>
+    <string name="register">Register</string>
+    <string name="registr_static_text">Dont have Accoutn ?</string>
+    <string name="branding">Office of District Collector ,District Narmadapuram MP</string>
+</resources>
