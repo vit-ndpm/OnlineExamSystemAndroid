@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                                             //set progressbaar gone
                                             progressBar.setVisibility(View.GONE);
                                             //finish the activity so that user will not come to login screen again on back button press
-                                         // finish();
+                                         finish();
                                           // showSucessAlert( response.getString("message"));
                                         }
                                         else if (response.getString("status").equals("failed")) {
