@@ -14,15 +14,19 @@
         android:theme="@style/Theme.OnlineExamSystem"
         tools:targetApi="31">
         <activity
+            android:theme="@style/Theme.OnlineExamSystem"
             android:name=".ForgetPassword"
             android:exported="false" />
         <activity
+            android:theme="@style/Theme.OnlineExamSystem"
             android:name=".Register"
             android:exported="false" />
         <activity
+            android:theme="@style/myThemeNoActionBar"
             android:name=".Home"
             android:exported="false" />
         <activity
+
             android:name=".SplashScreen"
             android:exported="true"
             android:launchMode="singleInstance"
