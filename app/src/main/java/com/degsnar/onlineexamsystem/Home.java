@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,14 +33,15 @@ public class Home extends AppCompatActivity {
     Toolbar toolbar;
     ArrayList<Exam> examArrayList;
     RecyclerView examRecyclerView;
+    ProgressBar home_progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         examRecyclerView=findViewById(R.id.examsRecyclerView);
-        examRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        examRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         //setup toolbar here
         toolbar = findViewById(R.id.home_toolbar);
         examArrayList=new ArrayList<Exam>();
@@ -69,11 +71,16 @@ public class Home extends AppCompatActivity {
                             try {
                                 JSONArray jsonArray=response.getJSONArray("papers");
                                 Log.d("Response", jsonArray.toString());
+                                examArrayList.clear();
                                 for (int i = 0; i <jsonArray.length() ; i++) {
                                     Log.d("papers",jsonArray.getJSONObject(i).getString("paper_name"));
                                     String paper_name=jsonArray.getJSONObject(i).getString("paper_name");
+                                    String available=jsonArray.getJSONObject(i).getString("available");
+                                    String paper_type=jsonArray.getJSONObject(i).getString("paper_type");
+                                    int id=jsonArray.getJSONObject(i).getInt("id");
 
-                                   Exam exam=new Exam(paper_name);
+                                   Exam exam=new Exam(id,paper_name,paper_type,available);
+
                                    examArrayList.add(exam);
                                     ExamRecyclerAdapter examRecyclerAdapter=new ExamRecyclerAdapter(getApplicationContext(),examArrayList);
                                     examRecyclerView.setAdapter(examRecyclerAdapter);
@@ -108,7 +115,9 @@ public class Home extends AppCompatActivity {
 
         } else if (itemId==R.id.changePassword) {
 
-        } else if (itemId==R.id.logout) {
+        } else if (itemId==R.id.refresh) {
+            fillExamArrayList();
+        }else if (itemId==R.id.logout) {
             logout();
         }
         return super.onOptionsItemSelected(item);

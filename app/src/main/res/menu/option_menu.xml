@@ -12,6 +12,11 @@
     android:title="Change Password"
         app:showAsAction="ifRoom"/>
     <item
+    android:id="@+id/refresh"
+    android:icon="@drawable/logout_24"
+    android:title="Refresh Data"
+        app:showAsAction="ifRoom"/>
+    <item
     android:id="@+id/logout"
     android:icon="@drawable/logout_24"
     android:title="Logout"

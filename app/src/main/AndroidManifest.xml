@@ -14,19 +14,21 @@
         android:theme="@style/Theme.OnlineExamSystem"
         tools:targetApi="31">
         <activity
-            android:theme="@style/Theme.OnlineExamSystem"
+            android:name=".Paper"
+            android:exported="false" />
+        <activity
             android:name=".ForgetPassword"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.OnlineExamSystem" />
         <activity
-            android:theme="@style/Theme.OnlineExamSystem"
             android:name=".Register"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.OnlineExamSystem" />
         <activity
-            android:theme="@style/myThemeNoActionBar"
             android:name=".Home"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/myThemeNoActionBar" />
         <activity
-
             android:name=".SplashScreen"
             android:exported="true"
             android:launchMode="singleInstance"
@@ -34,6 +36,7 @@
             android:theme="@style/Theme.RemoveSplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
