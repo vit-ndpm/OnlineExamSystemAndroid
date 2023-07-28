@@ -5,98 +5,55 @@
     android:id="@+id/paperRecyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+android:background="#59EF6C00"
     android:orientation="horizontal"
     tools:context=".Paper">
 
-    <TextView
-        android:id="@+id/exam_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Exam Title"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/questions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Total Question: 50"
-        app:layout_constraintBottom_toBottomOf="@+id/duration"
-        app:layout_constraintEnd_toStartOf="@+id/duration"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/exam_title" />
-
-    <TextView
-        android:id="@+id/duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Duration: 30 Min"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView10"
-        app:layout_constraintEnd_toStartOf="@+id/textView10"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/questions" />
-
-    <TextView
-        android:id="@+id/textView10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Attempted: 23"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/duration"
-        app:layout_constraintTop_toBottomOf="@+id/exam_title" />
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recyPaper"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/duration" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="5dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="10dp"
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true"
         app:contentPadding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView">
+        app:layout_constraintTop_toBottomOf="@+id/recyPaper">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent">
 
             <TextView
                 android:id="@+id/q_no"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="Q.No. 31"
+                android:text="@string/q_no"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -105,11 +62,17 @@
                 android:id="@+id/question"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/card_border"
                 android:padding="10dp"
-                android:text="who was the first prime minister of Independent india Explaint your answer in 200 words onlywho was the first prime minister of Independent india Explaint your answer in 200 words only"
+                android:text="@string/question"
                 android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/radioGroup"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/q_no" />
@@ -119,75 +82,120 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginBottom="16dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question">
 
-                <androidx.cardview.widget.CardView
+
+                <RadioButton
+                    android:id="@+id/opt1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/card_border"
+                    android:text="@string/option_title" />
 
-                    <RadioButton
-                        android:id="@+id/opt1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Pt. Jawahar Lal Nehru" />
-                </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
+                <RadioButton
+                    android:id="@+id/opt2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/card_border"
+                    android:text="@string/option_title" />
 
-                    <RadioButton
-                        android:id="@+id/opt2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Pt. Jawahar Lal Nehru" />
-                </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
+                <RadioButton
+                    android:id="@+id/opt3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/card_border"
+                    android:text="@string/option_title" />
 
-                    <RadioButton
-                        android:id="@+id/opt3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Pt. Jawahar Lal Nehru" />
-                </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
+                <RadioButton
+                    android:id="@+id/opt4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="5dp"
-                    app:cardUseCompatPadding="true">
-                    <RadioButton
-                        android:id="@+id/opt4"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Pt. Jawahar Lal Nehru" />
-                </androidx.cardview.widget.CardView>
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/card_border"
+                    android:text="@string/option_title" />
+
 
             </RadioGroup>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="409dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.523"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        tools:ignore="TextSizeCheck">
+
+        <Button
+            android:id="@+id/submitResponse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/exam_submit"
+            android:text="@string/save"
+            android:textColor="#212121"
+            app:icon="@drawable/baseline_save_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/submitExam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/exam_submit"
+            android:backgroundTint="#2E7D32"
+            android:text="@string/submit"
+            android:textColor="#212121"
+            app:icon="@drawable/baseline_save_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/nextQuestion"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/nextQuestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:background="@drawable/exam_submit"
+            android:text="@string/next"
+            android:textColor="#212121"
+            app:icon="@drawable/baseline_skip_next_24"
+            app:layout_constraintBaseline_toBaselineOf="@+id/submitResponse"
+            app:layout_constraintStart_toEndOf="@+id/submitResponse" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
