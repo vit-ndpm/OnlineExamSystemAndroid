@@ -51,34 +51,6 @@ public class Paper extends AppCompatActivity {
 
         questionArrayList = new ArrayList<Question>();
         fillQuestionsList();
-        questionArrayList.add(new Question(1, 1));
-        questionArrayList.add(new Question(2, 2));
-        questionArrayList.add(new Question(3, 3));
-        questionArrayList.add(new Question(4, 4));
-        questionArrayList.add(new Question(5, 5));
-        questionArrayList.add(new Question(6, 6));
-        questionArrayList.add(new Question(7, 7));
-        questionArrayList.add(new Question(8, 8));
-        questionArrayList.add(new Question(9, 9));
-        questionArrayList.add(new Question(10, 10));
-        questionArrayList.add(new Question(11, 11));
-        questionArrayList.add(new Question(12, 12));
-        questionArrayList.add(new Question(13, 13));
-        questionArrayList.add(new Question(14, 14));
-        questionArrayList.add(new Question(15, 15));
-        questionArrayList.add(new Question(16, 16));
-        questionArrayList.add(new Question(17, 17));
-        questionArrayList.add(new Question(18, 18));
-        questionArrayList.add(new Question(19, 19));
-        questionArrayList.add(new Question(20, 20));
-        questionArrayList.add(new Question(21, 21));
-        questionArrayList.add(new Question(22, 22));
-        questionArrayList.add(new Question(23, 23));
-        questionArrayList.add(new Question(24, 24));
-
-        QuestionRecyclerAdapter questionRecyclerAdapter = new QuestionRecyclerAdapter(this, questionArrayList);
-        recyPaper.setAdapter(questionRecyclerAdapter);
-
 
     }
 
@@ -98,15 +70,58 @@ public class Paper extends AppCompatActivity {
                     build().getAsJSONObject(new JSONObjectRequestListener() {
                         @Override
                         public void onResponse(JSONObject response) {
+                            Log.d("Response", response.toString());
                             try {
-                                if (response.getString("success").equals("success")) {
+                                if (response.getString("status").equals("success")) {
+                                    JSONArray jsonArray=response.getJSONArray("questions");
+                                    if (jsonArray.length()>0){
+                                        for (int i = 0; i <jsonArray.length() ; i++) {
+                                            JSONObject jsonObject=jsonArray.getJSONObject(i);
+                                            Question question=new Question();
+                                            question.setId(jsonObject.getInt("id"));
+                                            question.setPaper_id(jsonObject.getInt("paper_id"));
+                                            question.setQuestion_no(jsonObject.getInt("question_no"));
+                                            question.setCorrect_option(jsonObject.getInt("correct_option"));
+                                            question.setSubject_id(jsonObject.getInt("subject_id"));
+                                            question.setTopic_id(jsonObject.getInt("topic_id"));
+                                            question.setQuestion(jsonObject.getString("question"));
+                                            question.setOption1(jsonObject.getString("option1"));
+                                            question.setOption2(jsonObject.getString("option2"));
+                                            question.setOption3(jsonObject.getString("option3"));
+                                            question.setOption4(jsonObject.getString("option4"));
+                                            question.setDescription(jsonObject.getString("description"));
+                                            questionArrayList.add(question);
+
+                                        }
+                                        QuestionRecyclerAdapter questionRecyclerAdapter = new QuestionRecyclerAdapter(getApplicationContext(), questionArrayList)
+                                        {
+
+                                            @Override
+                                            public void setUpQuestion(int position) {
+                                               // Toast.makeText(Paper.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                                                question_no.setText(("Q.No."+questionArrayList.get(position).question_no));
+                                                question.setText(questionArrayList.get(position).question);
+                                                opt1.setText(questionArrayList.get(position).option1);
+                                                opt2.setText(questionArrayList.get(position).option2);
+                                                opt3.setText(questionArrayList.get(position).option3);
+                                                opt4.setText(questionArrayList.get(position).option4);
+                                            }
+                                        };
+                                        recyPaper.setAdapter(questionRecyclerAdapter);
+
+                                    }
+                                    Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
 
                                 }
-
-
+                                else if(response.getString("status").equals("failed")) {
+                                    Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
                             }
+
+
                         }
 
 
@@ -115,23 +130,25 @@ public class Paper extends AppCompatActivity {
 
                         }
                     });
-                    }
-
-
-
-
         }
 
-        private void initViews () {
-            recyPaper = findViewById(R.id.recyPaper);
-            question_no = findViewById(R.id.q_no);
-            question = findViewById(R.id.question);
-            submitResponse = findViewById(R.id.submitResponse);
-            nextQuestion = findViewById(R.id.nextQuestion);
-            radioGroup = findViewById(R.id.radioGroup);
-            opt1 = findViewById(R.id.opt1);
-            opt2 = findViewById(R.id.opt2);
-            opt3 = findViewById(R.id.opt3);
-            opt4 = findViewById(R.id.opt4);
-        }
+
     }
+    public void setUpQuestion(int position){
+        Toast.makeText(this,String.valueOf(questionArrayList.get(position).question_no) , Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void initViews() {
+        recyPaper = findViewById(R.id.recyPaper);
+        question_no = findViewById(R.id.q_no);
+        question = findViewById(R.id.question);
+        submitResponse = findViewById(R.id.submitResponse);
+        nextQuestion = findViewById(R.id.nextQuestion);
+        radioGroup = findViewById(R.id.radioGroup);
+        opt1 = findViewById(R.id.opt1);
+        opt2 = findViewById(R.id.opt2);
+        opt3 = findViewById(R.id.opt3);
+        opt4 = findViewById(R.id.opt4);
+    }
+}
