@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 
@@ -26,11 +29,14 @@ import java.util.ArrayList;
 
 public class Paper extends AppCompatActivity {
     int paperId;
+    String UserToken;
+    int userId;
+    int currentQuestionId;
     RecyclerView recyPaper;
     TextView question_no, question;
     Button submitResponse, nextQuestion;
     RadioGroup radioGroup;
-    RadioButton opt1, opt2, opt3, opt4;
+    RadioButton opt1, opt2, opt3, opt4, selectedOption;
     ArrayList<Question> questionArrayList;
 
 
@@ -51,6 +57,76 @@ public class Paper extends AppCompatActivity {
 
         questionArrayList = new ArrayList<Question>();
         fillQuestionsList();
+        submitResponse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                int selectedOptionId = radioGroup.getCheckedRadioButtonId();
+
+
+                if (selectedOptionId != -1) {
+                    int selectedOptionNumber = -100;
+                    if (selectedOptionId == opt1.getId()) {
+                        selectedOptionNumber = 1;
+                    } else if (selectedOptionId == opt2.getId()) {
+                        selectedOptionNumber = 2;
+                    } else if (selectedOptionId == opt3.getId()) {
+                        selectedOptionNumber = 3;
+                    } else if (selectedOptionId == opt4.getId()) {
+                        selectedOptionNumber = 4;
+                    }
+                    selectedOption = findViewById(selectedOptionId);
+                    String selectedRbText = selectedOption.getText().toString();
+                   // Toast.makeText(Paper.this, "You have Selected: " + selectedRbText + " option: " + selectedOptionNumber, Toast.LENGTH_SHORT).show();
+                    saveReposne(selectedOptionNumber);
+                } else {
+                    Toast.makeText(Paper.this, "You have not selected Anything: ", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+
+    }
+
+    private void saveReposne(int selectedOptionNumber) {
+        submitResponse.setText("Saving...");
+        submitResponse.setClickable(false);
+        AndroidNetworking.initialize(this);
+        String url = "https://exam.vinayakinfotech.co.in/api/setResponse";
+        AndroidNetworking.post(url)
+                .setPriority(Priority.HIGH)
+                .addHeaders("accept", "application/json")
+                .addHeaders("Authorization", "Bearer " + UserToken)
+                .addBodyParameter("user_id", String.valueOf(userId))
+                .addBodyParameter("paper_id", String.valueOf(paperId))
+                .addBodyParameter("question_id", String.valueOf(currentQuestionId))
+                .addBodyParameter("selected_option", String.valueOf(selectedOptionNumber))
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response.getString("status").equals("success")){
+                                Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+
+                            } else if (response.getString("status").equals("failed")) {
+                                Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(Paper.this, anError.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        submitResponse.setText("Save");
+        submitResponse.setClickable(true);
 
     }
 
@@ -59,7 +135,9 @@ public class Paper extends AppCompatActivity {
         SharedPreferences.Editor editor = myPref.edit();
         if (myPref.contains("token")) {
             String token = myPref.getString("token", null);
-
+            UserToken = token;
+            userId = myPref.getInt("userId", -100);
+            // Toast.makeText(this, "User ID: "+userId, Toast.LENGTH_SHORT).show();
 
             AndroidNetworking.initialize(Paper.this.getApplication());
             String url = "https://exam.vinayakinfotech.co.in/api/getAllQuestionByPaperId/" + paperId;
@@ -73,11 +151,11 @@ public class Paper extends AppCompatActivity {
                             Log.d("Response", response.toString());
                             try {
                                 if (response.getString("status").equals("success")) {
-                                    JSONArray jsonArray=response.getJSONArray("questions");
-                                    if (jsonArray.length()>0){
-                                        for (int i = 0; i <jsonArray.length() ; i++) {
-                                            JSONObject jsonObject=jsonArray.getJSONObject(i);
-                                            Question question=new Question();
+                                    JSONArray jsonArray = response.getJSONArray("questions");
+                                    if (jsonArray.length() > 0) {
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                            Question question = new Question();
                                             question.setId(jsonObject.getInt("id"));
                                             question.setPaper_id(jsonObject.getInt("paper_id"));
                                             question.setQuestion_no(jsonObject.getInt("question_no"));
@@ -93,29 +171,35 @@ public class Paper extends AppCompatActivity {
                                             questionArrayList.add(question);
 
                                         }
-                                        QuestionRecyclerAdapter questionRecyclerAdapter = new QuestionRecyclerAdapter(getApplicationContext(), questionArrayList)
-                                        {
+                                        QuestionRecyclerAdapter questionRecyclerAdapter = new QuestionRecyclerAdapter(getApplicationContext(), questionArrayList) {
 
                                             @Override
                                             public void setUpQuestion(int position) {
-                                               // Toast.makeText(Paper.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
-                                                question_no.setText(("Q.No."+questionArrayList.get(position).question_no));
+                                                currentQuestionId = -100;
+                                                radioGroup.clearCheck();
+
+                                                currentQuestionId = questionArrayList.get(position).id;
+                                                Toast.makeText(Paper.this, String.valueOf(currentQuestionId), Toast.LENGTH_SHORT).show();
+                                                question_no.setText(("Q.No." + questionArrayList.get(position).question_no));
                                                 question.setText(questionArrayList.get(position).question);
+                                                animateQuestion(question);
                                                 opt1.setText(questionArrayList.get(position).option1);
+                                                animateOption(opt1);
                                                 opt2.setText(questionArrayList.get(position).option2);
+                                                animateOption(opt2);
                                                 opt3.setText(questionArrayList.get(position).option3);
+                                                animateOption(opt3);
                                                 opt4.setText(questionArrayList.get(position).option4);
+                                                animateOption(opt4);
                                             }
                                         };
                                         recyPaper.setAdapter(questionRecyclerAdapter);
 
                                     }
-                                    Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+                                   // Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
 
-                                }
-                                else if(response.getString("status").equals("failed")) {
+                                } else if (response.getString("status").equals("failed")) {
                                     Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
-                                    return;
                                 }
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
@@ -127,17 +211,26 @@ public class Paper extends AppCompatActivity {
 
                         @Override
                         public void onError(ANError anError) {
-
+                            Toast.makeText(Paper.this, anError.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         }
 
 
     }
-    public void setUpQuestion(int position){
-        Toast.makeText(this,String.valueOf(questionArrayList.get(position).question_no) , Toast.LENGTH_SHORT).show();
 
+    private void animateQuestion(TextView question) {
+        TranslateAnimation animObj = new TranslateAnimation(question.getWidth(), 0, 0, 0);
+        animObj.setDuration(500);
+        question.startAnimation(animObj);
     }
+
+    private void animateOption(RadioButton option) {
+        TranslateAnimation animObj = new TranslateAnimation(option.getWidth(), 0, 0, 0);
+        animObj.setDuration(500);
+        option.startAnimation(animObj);
+    }
+
 
     private void initViews() {
         recyPaper = findViewById(R.id.recyPaper);

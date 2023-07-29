@@ -65,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
                                             Toast.makeText(MainActivity.this, response.getString("token"), Toast.LENGTH_SHORT).show();
 
                                             editor.putString("token", (String) response.get("token"));
+                                            editor.putInt("userId",  response.getJSONObject("user-data").getInt("id"));
+                                            editor.putString("userName", (String) response.getJSONObject("user-data").getString("name"));
+                                            editor.putString("userEmail", (String) response.getJSONObject("user-data").getString("email"));
+                                            editor.putString("userMobile", (String) response.getJSONObject("user-data").getString("mobile"));
                                             editor.commit();
                                             Intent intent=new Intent(MainActivity.this,Home.class);
                                             startActivity(intent);

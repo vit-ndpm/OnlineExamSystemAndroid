@@ -45,7 +45,7 @@ public class Register extends AppCompatActivity {
                 password = passwordEt.getText().toString();
                 password_confirmation = password_confirmationEt.getText().toString();
                 phone = phoneEt.getText().toString();
-                Toast.makeText(Register.this, phone.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, phone, Toast.LENGTH_SHORT).show();
                 if (isValidInputs(name, email, password, password_confirmation, phone)) {
                    // Toast.makeText(Register.this, "Client Side Input Validation Passed proceeding Further", Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.VISIBLE);
@@ -67,9 +67,13 @@ public class Register extends AppCompatActivity {
                                             Toast.makeText(Register.this, response.getString("message"), Toast.LENGTH_SHORT).show();
                                             SharedPreferences myPref=getSharedPreferences("userData",MODE_PRIVATE);
                                             SharedPreferences.Editor editor= myPref.edit();
-                                            Toast.makeText(Register.this, response.getString("token"), Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(Register.this, response.getString("token"), Toast.LENGTH_SHORT).show();
 
                                             editor.putString("token", (String) response.get("token"));
+                                            editor.putInt("userId",  response.getJSONObject("user-data").getInt("id"));
+                                            editor.putString("userName", (String) response.getJSONObject("user-data").getString("name"));
+                                            editor.putString("userEmail", (String) response.getJSONObject("user-data").getString("email"));
+                                            editor.putString("userMobile", (String) response.getJSONObject("user-data").getString("mobile"));
                                             editor.commit();
                                             Intent intent=new Intent(Register.this,Home.class);
                                             startActivity(intent);
@@ -113,11 +117,7 @@ public class Register extends AppCompatActivity {
         Log.d("isValid Password",String.valueOf(isValidPass));
         boolean isValidMobile = isValidMobileNo(phone);
         Log.d("isValid Phone",String.valueOf(isValidMobile));
-        if (isValidName&&isValidEmail&&isValidPass&&isValidMobile){
-            return true;
-        }else {
-            return false;
-        }
+        return isValidName && isValidEmail && isValidPass && isValidMobile;
     }
 
     private void initViews() {
