@@ -55,7 +55,7 @@ public class Paper extends AppCompatActivity {
         initViews();
         recyPaper.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        questionArrayList = new ArrayList<Question>();
+        questionArrayList = new ArrayList<>();
         fillQuestionsList();
         submitResponse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,8 +76,6 @@ public class Paper extends AppCompatActivity {
                         selectedOptionNumber = 4;
                     }
                     selectedOption = findViewById(selectedOptionId);
-                    String selectedRbText = selectedOption.getText().toString();
-                   // Toast.makeText(Paper.this, "You have Selected: " + selectedRbText + " option: " + selectedOptionNumber, Toast.LENGTH_SHORT).show();
                     saveReposne(selectedOptionNumber);
                 } else {
                     Toast.makeText(Paper.this, "You have not selected Anything: ", Toast.LENGTH_SHORT).show();
@@ -90,7 +88,6 @@ public class Paper extends AppCompatActivity {
     }
 
     private void saveReposne(int selectedOptionNumber) {
-        submitResponse.setText("Saving...");
         submitResponse.setClickable(false);
         AndroidNetworking.initialize(this);
         String url = "https://exam.vinayakinfotech.co.in/api/setResponse";
@@ -125,14 +122,12 @@ public class Paper extends AppCompatActivity {
                         Toast.makeText(Paper.this, anError.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-        submitResponse.setText("Save");
         submitResponse.setClickable(true);
 
     }
 
     private void fillQuestionsList() {
         SharedPreferences myPref = getSharedPreferences("userData", MODE_PRIVATE);
-        SharedPreferences.Editor editor = myPref.edit();
         if (myPref.contains("token")) {
             String token = myPref.getString("token", null);
             UserToken = token;
@@ -180,7 +175,7 @@ public class Paper extends AppCompatActivity {
 
                                                 currentQuestionId = questionArrayList.get(position).id;
                                                 Toast.makeText(Paper.this, String.valueOf(currentQuestionId), Toast.LENGTH_SHORT).show();
-                                                question_no.setText(("Q.No." + questionArrayList.get(position).question_no));
+                                                question_no.setText(getString(R.string.q_no,String.valueOf(questionArrayList.get(position).question_no)));
                                                 question.setText(questionArrayList.get(position).question);
                                                 animateQuestion(question);
                                                 opt1.setText(questionArrayList.get(position).option1);
@@ -207,8 +202,6 @@ public class Paper extends AppCompatActivity {
 
 
                         }
-
-
                         @Override
                         public void onError(ANError anError) {
                             Toast.makeText(Paper.this, anError.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
