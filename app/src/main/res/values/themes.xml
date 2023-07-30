@@ -2,20 +2,20 @@
     <!-- Base application theme. -->
     <style name="Theme.OnlineExamSystem" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#EF6C00</item>
-        <item name="colorPrimaryVariant">#EF6C00</item>
+        <item name="colorPrimary">#FF5722</item>
+        <item name="colorPrimaryVariant">#FF5722</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#EF6C00</item>
+        <item name="colorSecondary">#009688</item>
         <item name="colorSecondaryVariant">#FF8F00</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">#E1FF5722</item>
         <!-- Customize your theme here. -->
     </style>
     <style name="myThemeNoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#EF6C00</item>
+        <item name="colorPrimary">#FF5722</item>
         <item name="colorPrimaryVariant">#EF6C00</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->

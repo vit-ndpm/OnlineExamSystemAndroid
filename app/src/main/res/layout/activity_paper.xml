@@ -71,6 +71,22 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="30:00"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintBottom_toBottomOf="@+id/q_no"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.912"
+                app:layout_constraintStart_toEndOf="@+id/q_no"
+                app:layout_constraintTop_toTopOf="@+id/q_no"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
                 android:id="@+id/question"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -142,6 +158,20 @@
 
 
             </RadioGroup>
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/baseline_watch_later_24"
+                app:layout_constraintBottom_toBottomOf="@+id/timer"
+                app:layout_constraintEnd_toStartOf="@+id/timer"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/q_no"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
@@ -221,7 +251,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
-            android:text="Clear"
+            android:text="@string/clear"
             app:icon="@drawable/baseline_clear_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/updateResponse"
