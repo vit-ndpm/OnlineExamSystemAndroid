@@ -12,8 +12,8 @@
     <string name="next">next</string>
     <string name="q_no">Q.No. %1$s</string>
     <string name="save">Save</string>
-    <string name="option_title">Pt. Jawahar Lal Nehru</string>
-    <string name="question">who was the first prime minister of Independent india Explaint your answer in 200 words onlywho was the first prime minister of Independent india Explaint your answer in 200 words only</string>
+    <string name="option_title">Options will be shown here</string>
+    <string name="question">Click On Numbers Shown above to see that Question Number</string>
     <string name="q_number">23</string>
     <string name="clear">Clear</string>
 </resources>
