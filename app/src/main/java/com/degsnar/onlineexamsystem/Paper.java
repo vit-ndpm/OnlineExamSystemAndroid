@@ -148,7 +148,6 @@ public class Paper extends AppCompatActivity {
                    currentPosition=currentPosition+1;
                    setQuestion(currentPosition);
                }else {
-
                    setQuestion(currentPosition);
                }
 
@@ -239,7 +238,7 @@ public class Paper extends AppCompatActivity {
                             if (response.getString("status").equals("success")) {
                                 Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
 
-                            } else if (response.getString("status").equals("failed")) {
+                            } else if (response.getString("status").equals("Failed")) {
                                 Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
 
                             }
@@ -436,9 +435,9 @@ public class Paper extends AppCompatActivity {
 
 
     public void setQuestion(int position) {
-        currentQuestionId = -100;
-        currentPosition=position;
+
         if (currentPosition<questionArrayList.size()){
+            currentPosition=position;
             radioGroup.clearCheck();
             currentQuestionId = questionArrayList.get(position).id;
             //Toast.makeText(Paper.this, String.valueOf(currentQuestionId), Toast.LENGTH_SHORT).show();
@@ -455,7 +454,8 @@ public class Paper extends AppCompatActivity {
             animateOption(opt4);
         }
         else {
-            Toast.makeText(this, "Reached to Last Question", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Reached to Last Question:"+currentPosition+" Please On Question Number to see Questions or you can Submit Exam", Toast.LENGTH_LONG).show();
+            currentPosition=questionArrayList.size()-1;
         }
 
     }
