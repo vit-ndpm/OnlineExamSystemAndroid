@@ -39,7 +39,7 @@ public class Paper extends AppCompatActivity {
 
     RecyclerView recyPaper;
     TextView question_no, question, timer;
-    Button submitResponse, nextQuestion, updateResponseBtn, clearResponseBtn;
+    Button submitResponse, nextQuestion, updateResponseBtn, clearResponseBtn,submitExam;
     RadioGroup radioGroup;
     RadioButton opt1, opt2, opt3, opt4, selectedOption;
     ArrayList<Question> questionArrayList;
@@ -153,6 +153,18 @@ public class Paper extends AppCompatActivity {
 
             }
         });
+        submitExam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(Paper.this, Result.class);
+                myIntent.putExtra("paperId", paperId);
+                myIntent.putExtra("userId", userId);
+                myIntent.putExtra("UserToken", UserToken);
+                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+              startActivity(myIntent);
+            }
+        });
+
 
     }
 
@@ -386,6 +398,7 @@ public class Paper extends AppCompatActivity {
         question = findViewById(R.id.question);
         submitResponse = findViewById(R.id.submitResponse);
         nextQuestion = findViewById(R.id.nextQuestion);
+        submitExam = findViewById(R.id.submitExam);
         radioGroup = findViewById(R.id.radioGroup);
         opt1 = findViewById(R.id.opt1);
         opt2 = findViewById(R.id.opt2);
@@ -454,7 +467,7 @@ public class Paper extends AppCompatActivity {
             animateOption(opt4);
         }
         else {
-            Toast.makeText(this, "Reached to Last Question:"+currentPosition+" Please On Question Number to see Questions or you can Submit Exam", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Reached to Last Question:"+ currentPosition+" Please On Question Number to see Questions or you can Submit Exam", Toast.LENGTH_LONG).show();
             currentPosition=questionArrayList.size()-1;
         }
 
