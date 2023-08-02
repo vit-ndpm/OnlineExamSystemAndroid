@@ -16,4 +16,7 @@
     <string name="question">Click On Numbers Shown above to see that Question Number</string>
     <string name="q_number">23</string>
     <string name="clear">Clear</string>
+    <string name="go_to_home_page">Go to Home Page</string>
+    <string name="result_summary">Result Summary</string>
+    <string name="see_detailed_report">See Detailed Report</string>
 </resources>

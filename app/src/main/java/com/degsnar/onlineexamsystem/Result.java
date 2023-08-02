@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
@@ -27,6 +29,7 @@ public class Result extends AppCompatActivity {
     ArrayList<UserResponse> responseArrayList;
     ArrayList<ResultModel>resultArrayList;
     Button seeResult;
+    RecyclerView resultRecyclerView;
 
 
     @Override
@@ -45,6 +48,8 @@ public class Result extends AppCompatActivity {
         responseArrayList = new ArrayList<>();
         questionArrayList = new ArrayList<>();
         resultArrayList=new ArrayList<>();
+        resultRecyclerView=findViewById(R.id.resultRecyclerView);
+        resultRecyclerView.setLayoutManager(new LinearLayoutManager(Result.this));
 
         getAllQuestions();
         getAllResponse();
@@ -52,6 +57,8 @@ public class Result extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 calculateResult();
+                ResultRecyclerAdapter resultRecyclerAdapter=new ResultRecyclerAdapter(Result.this,questionArrayList,resultArrayList);
+
             }
         });
     }
