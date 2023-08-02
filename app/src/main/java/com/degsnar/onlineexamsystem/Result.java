@@ -30,7 +30,8 @@ public class Result extends AppCompatActivity {
     ArrayList<ResultModel>resultArrayList;
     Button seeResult;
     RecyclerView resultRecyclerView;
-
+    boolean isQuestionLoaded;
+    boolean isResponseLoaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +51,25 @@ public class Result extends AppCompatActivity {
         resultArrayList=new ArrayList<>();
         resultRecyclerView=findViewById(R.id.resultRecyclerView);
         resultRecyclerView.setLayoutManager(new LinearLayoutManager(Result.this));
-
+        isQuestionLoaded=false;
+        isResponseLoaded=false;
         getAllQuestions();
         getAllResponse();
+
+
+
         seeResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 calculateResult();
-                ResultRecyclerAdapter resultRecyclerAdapter=new ResultRecyclerAdapter(Result.this,questionArrayList,resultArrayList);
+                if (isQuestionLoaded&&isResponseLoaded){
+                    ResultRecyclerAdapter resultRecyclerAdapter=new ResultRecyclerAdapter(Result.this,questionArrayList,resultArrayList);
+                    resultRecyclerView.setAdapter(resultRecyclerAdapter);
+                }
 
             }
         });
+
     }
 
 
@@ -101,7 +110,7 @@ public class Result extends AppCompatActivity {
                                         Log.d("total Questions:",String.valueOf(questionArrayList.size()));
 
                                     }
-
+                                    isQuestionLoaded=true;
 
                                 }
                                 // Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
@@ -109,6 +118,7 @@ public class Result extends AppCompatActivity {
                             } else if (response.getString("status").equals("failed")) {
                                 Toast.makeText(Result.this, response.getString("message"), Toast.LENGTH_SHORT).show();
                             }
+
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -156,7 +166,7 @@ public class Result extends AppCompatActivity {
                                     responseArrayList.add(userResponse);
                                     Log.d("Total Response Found:", String.valueOf(responseArrayList.size()));
                                 }
-
+                                isResponseLoaded=true;
 
                             } else if (response.getString("status").equals("failed")) {
                                 Toast.makeText(Result.this, response.getString("message"), Toast.LENGTH_SHORT).show();

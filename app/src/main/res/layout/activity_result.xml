@@ -4,14 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:visibility="visible"
     tools:context=".Result">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/resultRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="399dp"
+        android:layout_height="641dp"
         android:layout_marginTop="8dp"
         android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/gotoHome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seeResult" />
@@ -24,7 +26,7 @@
         android:text="@string/see_detailed_report"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/summary"/>
+        app:layout_constraintTop_toBottomOf="@+id/summary" />
 
     <TextView
         android:id="@+id/summary"

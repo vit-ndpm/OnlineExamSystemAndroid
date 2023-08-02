@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -23,6 +24,7 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAd
         this.context = context;
         this.questionArrayList = questionArrayList;
         this.resultModelArrayList = resultModelArrayList;
+        Toast.makeText(context, String.valueOf(questionArrayList.size()), Toast.LENGTH_SHORT).show();
     }
 
     @NonNull
@@ -46,6 +48,7 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAd
 
     @Override
     public int getItemCount() {
+
         return questionArrayList.size();
     }
 
