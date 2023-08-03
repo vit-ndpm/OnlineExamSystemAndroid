@@ -1,5 +1,6 @@
 package com.degsnar.onlineexamsystem;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -52,6 +53,9 @@ public class Home extends AppCompatActivity {
     }
 
     private void fillExamArrayList() {
+        ProgressDialog dialog = ProgressDialog.show(Home.this, "",
+                "Loading. Please wait...", true);
+
         SharedPreferences myPref = getSharedPreferences("userData", MODE_PRIVATE);
         SharedPreferences.Editor editor = myPref.edit();
         if (myPref.contains("token")) {
@@ -100,6 +104,7 @@ public class Home extends AppCompatActivity {
                         }
                     });
         }
+        dialog.dismiss();
     }
 
     @Override

@@ -1,10 +1,14 @@
 package com.degsnar.onlineexamsystem;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +28,7 @@ import java.util.ArrayList;
 
 public class Result extends AppCompatActivity {
     int paperId, userId;
+    int correctAnswers;
     String UserToken;
     ArrayList<Question> questionArrayList;
     ArrayList<UserResponse> responseArrayList;
@@ -32,12 +37,21 @@ public class Result extends AppCompatActivity {
     RecyclerView resultRecyclerView;
     boolean isQuestionLoaded;
     boolean isResponseLoaded;
+    TextView totalQuestions,totalAttempted,totalCorrect,percentage;
+    ImageView smilyImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         seeResult=findViewById(R.id.seeResult);
+        resultRecyclerView=findViewById(R.id.resultRecyclerView);
+        totalAttempted=findViewById(R.id.attempted);
+        totalQuestions=findViewById(R.id.totalQuestion);
+        totalCorrect=findViewById(R.id.correctQuestion);
+        percentage=findViewById(R.id.percentage);
+        smilyImage=findViewById(R.id.imgSmily);
+
         Intent iin = getIntent();
         Bundle b = iin.getExtras();
         if (b != null) {
@@ -49,12 +63,15 @@ public class Result extends AppCompatActivity {
         responseArrayList = new ArrayList<>();
         questionArrayList = new ArrayList<>();
         resultArrayList=new ArrayList<>();
-        resultRecyclerView=findViewById(R.id.resultRecyclerView);
+
         resultRecyclerView.setLayoutManager(new LinearLayoutManager(Result.this));
+        resultRecyclerView.setHasFixedSize(true);
+
         isQuestionLoaded=false;
         isResponseLoaded=false;
         getAllQuestions();
         getAllResponse();
+
 
 
 
@@ -63,7 +80,7 @@ public class Result extends AppCompatActivity {
             public void onClick(View v) {
                 calculateResult();
                 if (isQuestionLoaded&&isResponseLoaded){
-                    ResultRecyclerAdapter resultRecyclerAdapter=new ResultRecyclerAdapter(Result.this,questionArrayList,resultArrayList);
+                    ResultRecyclerAdapter resultRecyclerAdapter=new ResultRecyclerAdapter(Result.this,questionArrayList,responseArrayList);
                     resultRecyclerView.setAdapter(resultRecyclerAdapter);
                 }
 
@@ -76,7 +93,6 @@ public class Result extends AppCompatActivity {
 
     private void getAllQuestions() {
 
-
         AndroidNetworking.initialize(Result.this);
         String url = "https://exam.vinayakinfotech.co.in/api/getAllQuestionByPaperId/" + paperId;
         AndroidNetworking.get(url).
@@ -86,7 +102,8 @@ public class Result extends AppCompatActivity {
                 build().getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-
+                        ProgressDialog dialog = ProgressDialog.show(Result.this, "",
+                                "Loading. Please wait...", true);
                         try {
                             if (response.getString("status").equals("success")) {
                                 JSONArray jsonArray = response.getJSONArray("questions");
@@ -107,11 +124,11 @@ public class Result extends AppCompatActivity {
                                         question.setOption4(jsonObject.getString("option4"));
                                         question.setDescription(jsonObject.getString("description"));
                                         questionArrayList.add(question);
-                                        Log.d("total Questions:",String.valueOf(questionArrayList.size()));
+                                       // Log.d("total Questions:",String.valueOf(questionArrayList.size()));
 
                                     }
                                     isQuestionLoaded=true;
-
+                                    totalQuestions.setText(String.valueOf(questionArrayList.size()));
                                 }
                                 // Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
 
@@ -123,7 +140,7 @@ public class Result extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
 
-
+                        dialog.dismiss();
                     }
 
                     @Override
@@ -132,9 +149,9 @@ public class Result extends AppCompatActivity {
                     }
                 });
     }
-
-
     private void getAllResponse() {
+        ProgressDialog dialog = ProgressDialog.show(Result.this, "",
+                "Loading. Please wait...", true);
         AndroidNetworking.initialize(this);
         String url = "https://exam.vinayakinfotech.co.in/api/getAllResponse";
         AndroidNetworking.get(url)
@@ -167,6 +184,9 @@ public class Result extends AppCompatActivity {
                                     Log.d("Total Response Found:", String.valueOf(responseArrayList.size()));
                                 }
                                 isResponseLoaded=true;
+                                totalAttempted.setText(String.valueOf(responseArrayList.size()));
+                                calculateResult();
+
 
                             } else if (response.getString("status").equals("failed")) {
                                 Toast.makeText(Result.this, response.getString("message"), Toast.LENGTH_SHORT).show();
@@ -175,7 +195,7 @@ public class Result extends AppCompatActivity {
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-
+                        dialog.dismiss();
                     }
 
                     @Override
@@ -188,23 +208,49 @@ public class Result extends AppCompatActivity {
 
     }
     private void calculateResult() {
-        int counter=0;
+         correctAnswers=0;
         for (int i = 0; i < questionArrayList.size(); i++) {
             int currentQuestionId=questionArrayList.get(i).getId();
             for (int j = 0; j <responseArrayList.size() ; j++) {
-                if (currentQuestionId==responseArrayList.get(j).question_id){
-                    ResultModel resultModel=new ResultModel();
-                    resultModel.question_id=questionArrayList.get(i).id;
-                    resultModel.response_id=responseArrayList.get(j).id;
-                    resultModel.correct_option=questionArrayList.get(i).correct_option;
-                    resultModel.selected_option=responseArrayList.get(j).selected_option;
-                    resultArrayList.add(resultModel);
-                    Log.d("Result Model","selected Option: "+resultModel.selected_option+" Correct Option: "+resultModel.correct_option);
+                int questionIdFromResponseList=responseArrayList.get(j).question_id;
+                if (currentQuestionId==questionIdFromResponseList){
+                    if (questionArrayList.get(i).correct_option==responseArrayList.get(j).selected_option){
+                        correctAnswers++;
+                    }
 
                 }
             }
 
 
         }
+        totalCorrect.setText(String.valueOf(correctAnswers));
+        if (questionArrayList.size()>0){
+           int totalQuestions=questionArrayList.size();
+           float deciValue=correctAnswers*100.0f/totalQuestions;
+            Log.d("%",String.valueOf(deciValue));
+            percentage.setText(String.format("%.2f", deciValue)+"%");
+            int inValue=(int)deciValue;
+         if (inValue<50){
+             Toast.makeText(this, "Poor Performance You Need to Improve", Toast.LENGTH_SHORT).show();
+             smilyImage.setImageResource(R.drawable.star_4);
+         } else if (inValue>=50&&inValue<75)
+         {
+             Toast.makeText(this, "Average Performance You Can easily Improve", Toast.LENGTH_SHORT).show();
+             smilyImage.setImageResource(R.drawable.star_3);
+
+         }
+         else if (inValue>=75&&inValue<85)
+         {
+             smilyImage.setImageResource(R.drawable.star_5);
+             Toast.makeText(this, "Good Performance You Can still Scope of  Improvement", Toast.LENGTH_SHORT).show();
+
+         }else if (inValue>=85)
+         {
+             smilyImage.setImageResource(R.drawable.star_2);
+             Toast.makeText(this, "Excellent Performance Performance You Can still Scope of  Improvement", Toast.LENGTH_SHORT).show();
+
+         }
+        }
+
     }
 }

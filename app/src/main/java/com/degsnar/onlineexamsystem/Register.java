@@ -2,6 +2,7 @@ package com.degsnar.onlineexamsystem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -39,6 +40,8 @@ public class Register extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ProgressDialog dialog = ProgressDialog.show(Register.this, "",
+                        "Loading. Please wait...", true);
                 String name, email, password, password_confirmation, phone;
                 name = nameEt.getText().toString();
                 email = emailEt.getText().toString();
@@ -46,6 +49,8 @@ public class Register extends AppCompatActivity {
                 password_confirmation = password_confirmationEt.getText().toString();
                 phone = phoneEt.getText().toString();
                 Toast.makeText(Register.this, phone, Toast.LENGTH_SHORT).show();
+
+
                 if (isValidInputs(name, email, password, password_confirmation, phone)) {
                    // Toast.makeText(Register.this, "Client Side Input Validation Passed proceeding Further", Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.VISIBLE);
@@ -99,8 +104,9 @@ public class Register extends AppCompatActivity {
                                 }
                             });
 
-
+                    dialog.dismiss();
                 }else {
+                    dialog.dismiss();
                     Toast.makeText(Register.this, "Validation Failed Please Check again and Enter Valid Inputs", Toast.LENGTH_LONG).show();
                 }
             }

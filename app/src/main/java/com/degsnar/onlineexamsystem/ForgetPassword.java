@@ -4,6 +4,7 @@ import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,9 +47,12 @@ public class ForgetPassword extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String email= String.valueOf(registeredEmail.getText());
+                ProgressDialog dialog = ProgressDialog.show(ForgetPassword.this, "Sending Reset Link...",
+                        "Loading. Please wait...", true);
                 if (emailValidator(email))
                 {
-                    progressBar.setVisibility(View.VISIBLE);
+
+
                     String url="https://exam.vinayakinfotech.co.in/api/forgetPassword";
                     AndroidNetworking.post(url).setPriority(Priority.HIGH)
                             .addBodyParameter("email",email).build().
@@ -84,11 +88,12 @@ public class ForgetPassword extends AppCompatActivity {
                             progressBar.setVisibility(View.GONE);
                         }
                     });
+                    dialog.dismiss();
 
                 }
                 else
                 {
-                    status.setVisibility(View.VISIBLE);
+                    dialog.dismiss();
                     status.setText("Please Enter Valid Email Address");
                     status.setTextColor(Color.parseColor("#FF0000"));
                 }

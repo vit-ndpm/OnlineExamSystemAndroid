@@ -1,6 +1,7 @@
 package com.degsnar.onlineexamsystem;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,7 +30,13 @@ public class MainActivity extends AppCompatActivity {
     Button loginButton, registerButton, forgetPassword;
     ProgressBar progressBar;
 
+    public static boolean isValidPassword(String s) {
+        Pattern PASSWORD_PATTERN
+                = Pattern.compile(
+                "[a-zA-Z0-9\\!\\@\\#\\$]{8,24}");
 
+        return !TextUtils.isEmpty(s) && PASSWORD_PATTERN.matcher(s).matches();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +46,16 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         AndroidNetworking.initialize(this);
         loginButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 String emailtxt = email.getText().toString();
                 String passwordtxt = password.getText().toString();
                 boolean isValidCredentials = validateEmailAndPassword(emailtxt, passwordtxt);
+                ProgressDialog dialog = ProgressDialog.show(MainActivity.this, "",
+                        "Loading. Please wait...", true);
                 if (isValidCredentials) {
+
                     progressBar.setVisibility(View.VISIBLE);
                     // Toast.makeText(MainActivity.this, "email: "+emailtxt.toString()+" \n Password: "+passwordtxt, Toast.LENGTH_SHORT).show();
                     String url = "https://exam.vinayakinfotech.co.in/api/login";
@@ -58,27 +69,26 @@ public class MainActivity extends AppCompatActivity {
 
                                     try {
 
-                                        if (response.getString("status").equals("success")){
+                                        if (response.getString("status").equals("success")) {
                                             Toast.makeText(MainActivity.this, response.getString("message"), Toast.LENGTH_SHORT).show();
-                                            SharedPreferences myPref=getSharedPreferences("userData",MODE_PRIVATE);
-                                            SharedPreferences.Editor editor= myPref.edit();
+                                            SharedPreferences myPref = getSharedPreferences("userData", MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = myPref.edit();
                                             Toast.makeText(MainActivity.this, response.getString("token"), Toast.LENGTH_SHORT).show();
 
                                             editor.putString("token", (String) response.get("token"));
-                                            editor.putInt("userId",  response.getJSONObject("user-data").getInt("id"));
+                                            editor.putInt("userId", response.getJSONObject("user-data").getInt("id"));
                                             editor.putString("userName", (String) response.getJSONObject("user-data").getString("name"));
                                             editor.putString("userEmail", (String) response.getJSONObject("user-data").getString("email"));
                                             editor.putString("userMobile", (String) response.getJSONObject("user-data").getString("mobile"));
                                             editor.commit();
-                                            Intent intent=new Intent(MainActivity.this,Home.class);
+                                            Intent intent = new Intent(MainActivity.this, Home.class);
                                             startActivity(intent);
                                             //set progressbaar gone
                                             progressBar.setVisibility(View.GONE);
                                             //finish the activity so that user will not come to login screen again on back button press
-                                         finish();
-                                          // showSucessAlert( response.getString("message"));
-                                        }
-                                        else if (response.getString("status").equals("failed")) {
+                                            finish();
+                                            // showSucessAlert( response.getString("message"));
+                                        } else if (response.getString("status").equals("failed")) {
                                             Toast.makeText(MainActivity.this, response.getString("message"), Toast.LENGTH_SHORT).show();
                                             progressBar.setVisibility(View.GONE);
                                         }
@@ -96,22 +106,26 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
 
+                    dialog.dismiss();
                 } else {
+                    dialog.dismiss();
                     Toast.makeText(MainActivity.this, "email and Passwrod Validation failed", Toast.LENGTH_SHORT).show();
+
                 }
             }
+
         });
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this, Register.class);
+                Intent intent = new Intent(MainActivity.this, Register.class);
                 startActivity(intent);
             }
         });
         forgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this, ForgetPassword.class);
+                Intent intent = new Intent(MainActivity.this, ForgetPassword.class);
                 startActivity(intent);
             }
         });
@@ -153,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         registerButton = findViewById(R.id.register);
         forgetPassword = findViewById(R.id.forgetPassword);
-        progressBar=findViewById(R.id.myProgressBar);
+        progressBar = findViewById(R.id.myProgressBar);
     }
 
     public boolean emailValidator(String email) {
@@ -163,12 +177,5 @@ public class MainActivity extends AppCompatActivity {
         pattern = Pattern.compile(EMAIL_PATTERN);
         matcher = pattern.matcher(email);
         return matcher.matches();
-    }
-    public static boolean isValidPassword(String s) {
-        Pattern PASSWORD_PATTERN
-                = Pattern.compile(
-                "[a-zA-Z0-9\\!\\@\\#\\$]{8,24}");
-
-        return !TextUtils.isEmpty(s) && PASSWORD_PATTERN.matcher(s).matches();
     }
 }

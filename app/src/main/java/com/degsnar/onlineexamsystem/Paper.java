@@ -1,6 +1,7 @@
 package com.degsnar.onlineexamsystem;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,11 +36,12 @@ public class Paper extends AppCompatActivity {
     String UserToken;
     int userId;
     int currentQuestionId;
-    int currentPosition=0;
+    int currentPosition = 0;
+    int examTime;
 
     RecyclerView recyPaper;
     TextView question_no, question, timer;
-    Button submitResponse, nextQuestion, updateResponseBtn, clearResponseBtn,submitExam;
+    Button submitResponse, nextQuestion, updateResponseBtn, clearResponseBtn, submitExam;
     RadioGroup radioGroup;
     RadioButton opt1, opt2, opt3, opt4, selectedOption;
     ArrayList<Question> questionArrayList;
@@ -49,6 +51,7 @@ public class Paper extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper);
+        examTime=30;
         //Get paperId from Bundle
         Intent iin = getIntent();
         Bundle b = iin.getExtras();
@@ -60,6 +63,7 @@ public class Paper extends AppCompatActivity {
         startCountDown();
         //initialize views
         initViews();
+
         recyPaper.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         questionArrayList = new ArrayList<>();
@@ -144,24 +148,28 @@ public class Paper extends AppCompatActivity {
         nextQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               if (currentPosition<questionArrayList.size()){
-                   currentPosition=currentPosition+1;
-                   setQuestion(currentPosition);
-               }else {
-                   setQuestion(currentPosition);
-               }
+                if (currentPosition < questionArrayList.size()) {
+                    currentPosition = currentPosition + 1;
+                    setQuestion(currentPosition);
+                } else {
+                    setQuestion(currentPosition);
+                }
 
             }
         });
         submitExam.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+                ProgressDialog dialog = ProgressDialog.show(Paper.this, "",
+                        "Loading. Please wait...", true);
                 Intent myIntent = new Intent(Paper.this, Result.class);
                 myIntent.putExtra("paperId", paperId);
                 myIntent.putExtra("userId", userId);
                 myIntent.putExtra("UserToken", UserToken);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-              startActivity(myIntent);
+                startActivity(myIntent);
+                dialog.dismiss();
             }
         });
 
@@ -169,10 +177,8 @@ public class Paper extends AppCompatActivity {
     }
 
 
-
-
     private void startCountDown() {
-        CountDownTimer countDownTimer = new CountDownTimer(30 * 60 * 1000, 1000) {
+        CountDownTimer countDownTimer = new CountDownTimer(examTime* 60 * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -184,13 +190,42 @@ public class Paper extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-
+                showSucessAlert("!!Time Over Please Submit Your Exam !!!");
             }
         }.start();
     }
 
+    private void showSucessAlert(String message) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder((this));
+        builder1.setMessage(message);
+        builder1.setCancelable(false);
+
+        builder1.setPositiveButton(
+                "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+
+                        Intent myIntent = new Intent(Paper.this, Result.class);
+                        myIntent.putExtra("paperId", paperId);
+                        myIntent.putExtra("userId", userId);
+                        myIntent.putExtra("UserToken", UserToken);
+                        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(myIntent);
+
+
+                    }
+                });
+
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
     //save resposens to server
     private void saveReposne(int selectedOptionNumber) {
+        ProgressDialog dialog = ProgressDialog.show(Paper.this, "",
+                "Loading. Please wait...", true);
         submitResponse.setClickable(false);
         AndroidNetworking.initialize(this);
         String url = "https://exam.vinayakinfotech.co.in/api/setResponse";
@@ -208,10 +243,12 @@ public class Paper extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             if (response.getString("status").equals("success")) {
+                                dialog.dismiss();
                                 Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
 
 
                             } else if (response.getString("status").equals("failed")) {
+                                dialog.dismiss();
                                 Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
 
                             }
@@ -223,6 +260,7 @@ public class Paper extends AppCompatActivity {
 
                     @Override
                     public void onError(ANError anError) {
+                        dialog.dismiss();
                         Toast.makeText(Paper.this, anError.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -232,6 +270,9 @@ public class Paper extends AppCompatActivity {
 
     //update response
     private void updateResponse(int selectedOptionNumber) {
+        ProgressDialog dialog = ProgressDialog.show(Paper.this, "",
+                "Loading. Please wait...", true);
+
         AndroidNetworking.initialize(this);
         String url = "https://exam.vinayakinfotech.co.in/api/updateResponse";
         AndroidNetworking.post(url)
@@ -248,9 +289,12 @@ public class Paper extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             if (response.getString("status").equals("success")) {
+
+                                dialog.dismiss();
                                 Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
 
                             } else if (response.getString("status").equals("Failed")) {
+                                dialog.dismiss();
                                 Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
 
                             }
@@ -262,6 +306,7 @@ public class Paper extends AppCompatActivity {
 
                     @Override
                     public void onError(ANError anError) {
+                        dialog.dismiss();
                         Toast.makeText(Paper.this, anError.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -270,6 +315,8 @@ public class Paper extends AppCompatActivity {
 
     //Delete Response from server
     private void clearResponse(int selectedOptionNumber) {
+        ProgressDialog dialog = ProgressDialog.show(Paper.this, "",
+                "Loading. Please wait...", true);
         AndroidNetworking.initialize(this);
         String url = "https://exam.vinayakinfotech.co.in/api/delteResposne";
         AndroidNetworking.post(url)
@@ -287,9 +334,11 @@ public class Paper extends AppCompatActivity {
                             if (response.getString("status").equals("success")) {
                                 radioGroup.clearCheck();
                                 Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
 
                             } else if (response.getString("status").equals("failed")) {
                                 Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
 
                             }
                         } catch (JSONException e) {
@@ -301,12 +350,15 @@ public class Paper extends AppCompatActivity {
                     @Override
                     public void onError(ANError anError) {
                         Toast.makeText(Paper.this, anError.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
                 });
 
     }
 
     private void fillQuestionsList() {
+        ProgressDialog dialog = ProgressDialog.show(Paper.this, "",
+                "Loading. Please wait...", true);
         SharedPreferences myPref = getSharedPreferences("userData", MODE_PRIVATE);
         if (myPref.contains("token")) {
             String token = myPref.getString("token", null);
@@ -344,7 +396,6 @@ public class Paper extends AppCompatActivity {
                                             question.setOption4(jsonObject.getString("option4"));
                                             question.setDescription(jsonObject.getString("description"));
                                             questionArrayList.add(question);
-
                                         }
                                         questionRecyclerAdapter = new QuestionRecyclerAdapter(getApplicationContext(), questionArrayList) {
 
@@ -356,10 +407,14 @@ public class Paper extends AppCompatActivity {
                                         };
                                         recyPaper.setAdapter(questionRecyclerAdapter);
 
+
                                     }
                                     // Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
 
                                 } else if (response.getString("status").equals("failed")) {
+                                    dialog.dismiss();
+
                                     Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
@@ -449,8 +504,8 @@ public class Paper extends AppCompatActivity {
 
     public void setQuestion(int position) {
 
-        if (currentPosition<questionArrayList.size()){
-            currentPosition=position;
+        if (currentPosition < questionArrayList.size()) {
+            currentPosition = position;
             radioGroup.clearCheck();
             currentQuestionId = questionArrayList.get(position).id;
             //Toast.makeText(Paper.this, String.valueOf(currentQuestionId), Toast.LENGTH_SHORT).show();
@@ -465,10 +520,9 @@ public class Paper extends AppCompatActivity {
             animateOption(opt3);
             opt4.setText(questionArrayList.get(position).option4);
             animateOption(opt4);
-        }
-        else {
-            Toast.makeText(this, "Reached to Last Question:"+ currentPosition+" Please On Question Number to see Questions or you can Submit Exam", Toast.LENGTH_LONG).show();
-            currentPosition=questionArrayList.size()-1;
+        } else {
+            Toast.makeText(this, "Reached to Last Question:" + currentPosition + " Please On Question Number to see Questions or you can Submit Exam", Toast.LENGTH_LONG).show();
+            currentPosition = questionArrayList.size() - 1;
         }
 
     }

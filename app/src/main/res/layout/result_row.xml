@@ -100,8 +100,9 @@
         android:layout_marginEnd="16dp"
         android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView12"
-        app:layout_constraintTop_toBottomOf="@+id/correctOptionTv" />
+        app:layout_constraintTop_toBottomOf="@+id/selectedOption" />
 
     <TextView
         android:id="@+id/textView5"
@@ -167,7 +168,7 @@
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="8dp"
         android:text="Explaination: "
         app:layout_constraintBottom_toBottomOf="@+id/descriptionTv"
         app:layout_constraintStart_toStartOf="parent"
@@ -236,7 +237,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/correctOptionTv"
         app:layout_constraintEnd_toStartOf="@+id/correctOptionTv"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/correctOptionTv" />
+        app:layout_constraintTop_toTopOf="@+id/correctOptionTv"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/correctOptionTv"
@@ -249,4 +251,40 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView13"
         app:layout_constraintTop_toBottomOf="@+id/opt4Tv" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Selected Option: "
+        app:layout_constraintBottom_toBottomOf="@+id/selectedOption"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/selectedOption" />
+
+    <TextView
+        android:id="@+id/selectedOption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Not Answered"
+        app:layout_constraintEnd_toStartOf="@+id/img5"
+        app:layout_constraintStart_toEndOf="@+id/textView14"
+        app:layout_constraintTop_toBottomOf="@+id/correctOptionTv" />
+
+    <ImageView
+        android:id="@+id/img5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/baseline_close_24"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/selectedOption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/selectedOption"
+        app:layout_constraintTop_toTopOf="@+id/selectedOption"
+        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
