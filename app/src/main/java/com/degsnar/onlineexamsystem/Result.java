@@ -33,7 +33,7 @@ public class Result extends AppCompatActivity {
     ArrayList<Question> questionArrayList;
     ArrayList<UserResponse> responseArrayList;
     ArrayList<ResultModel>resultArrayList;
-    Button seeResult;
+    Button seeResult,gotoHome;
     RecyclerView resultRecyclerView;
     boolean isQuestionLoaded;
     boolean isResponseLoaded;
@@ -51,6 +51,15 @@ public class Result extends AppCompatActivity {
         totalCorrect=findViewById(R.id.correctQuestion);
         percentage=findViewById(R.id.percentage);
         smilyImage=findViewById(R.id.imgSmily);
+        gotoHome=findViewById(R.id.gotoHome);
+        gotoHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(Result.this, Home.class);
+               Result.this.startActivity(intent);
+
+            }
+        });
 
         Intent iin = getIntent();
         Bundle b = iin.getExtras();
