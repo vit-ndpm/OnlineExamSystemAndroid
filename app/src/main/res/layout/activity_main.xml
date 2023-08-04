@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/email"
+        android:id="@+id/newPasswordET"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/confirm_passwordET"
         android:layout_width="wrap_content"
         android:minHeight="48dp"
         android:autofillHints="password"
@@ -54,10 +54,10 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        app:layout_constraintTop_toBottomOf="@+id/newPasswordET" />
 
     <Button
-        android:id="@+id/loginButton"
+        android:id="@+id/changePasswordBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/tv_normal_border"
@@ -68,7 +68,7 @@
         android:text="@string/login_button_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/confirm_passwordET" />
 
     <Button
         android:id="@+id/forgetPassword"
@@ -86,7 +86,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginButton" />
+        app:layout_constraintTop_toBottomOf="@+id/changePasswordBtn" />
 
     <Button
         android:id="@+id/register"
@@ -142,7 +142,7 @@
         app:layout_constraintEnd_toEndOf="@+id/forgetPassword"
         app:layout_constraintHorizontal_bias="0.429"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/loginButton" />
+        app:layout_constraintTop_toTopOf="@+id/changePasswordBtn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,14 +1,13 @@
 package com.degsnar.onlineexamsystem;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -69,108 +68,92 @@ public class Paper extends AppCompatActivity {
         questionArrayList = new ArrayList<>();
         fillQuestionsList();
 
-        submitResponse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        submitResponse.setOnClickListener(view -> {
 
-                int selectedOptionId = radioGroup.getCheckedRadioButtonId();
+            int selectedOptionId = radioGroup.getCheckedRadioButtonId();
 
 
-                if (selectedOptionId != -1) {
-                    int selectedOptionNumber = -100;
-                    if (selectedOptionId == opt1.getId()) {
-                        selectedOptionNumber = 1;
-                    } else if (selectedOptionId == opt2.getId()) {
-                        selectedOptionNumber = 2;
-                    } else if (selectedOptionId == opt3.getId()) {
-                        selectedOptionNumber = 3;
-                    } else if (selectedOptionId == opt4.getId()) {
-                        selectedOptionNumber = 4;
-                    }
-                    selectedOption = findViewById(selectedOptionId);
-                    saveReposne(selectedOptionNumber);
-                } else {
-                    Toast.makeText(Paper.this, "You have not selected Anything: ", Toast.LENGTH_SHORT).show();
+            if (selectedOptionId != -1) {
+                int selectedOptionNumber = -100;
+                if (selectedOptionId == opt1.getId()) {
+                    selectedOptionNumber = 1;
+                } else if (selectedOptionId == opt2.getId()) {
+                    selectedOptionNumber = 2;
+                } else if (selectedOptionId == opt3.getId()) {
+                    selectedOptionNumber = 3;
+                } else if (selectedOptionId == opt4.getId()) {
+                    selectedOptionNumber = 4;
                 }
+                selectedOption = findViewById(selectedOptionId);
+                saveReposne(selectedOptionNumber);
+            } else {
+                Toast.makeText(Paper.this, "You have not selected Anything: ", Toast.LENGTH_SHORT).show();
+            }
 
 
+        });
+        updateResponseBtn.setOnClickListener(view -> {
+            int selectedOptionId = radioGroup.getCheckedRadioButtonId();
+
+
+            if (selectedOptionId != -1) {
+                int selectedOptionNumber = -100;
+                if (selectedOptionId == opt1.getId()) {
+                    selectedOptionNumber = 1;
+                } else if (selectedOptionId == opt2.getId()) {
+                    selectedOptionNumber = 2;
+                } else if (selectedOptionId == opt3.getId()) {
+                    selectedOptionNumber = 3;
+                } else if (selectedOptionId == opt4.getId()) {
+                    selectedOptionNumber = 4;
+                }
+                selectedOption = findViewById(selectedOptionId);
+                updateResponse(selectedOptionNumber);
+            } else {
+                Toast.makeText(Paper.this, "You have not selected Anything: ", Toast.LENGTH_SHORT).show();
             }
         });
-        updateResponseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int selectedOptionId = radioGroup.getCheckedRadioButtonId();
+        clearResponseBtn.setOnClickListener(view -> {
+            int selectedOptionId = radioGroup.getCheckedRadioButtonId();
 
 
-                if (selectedOptionId != -1) {
-                    int selectedOptionNumber = -100;
-                    if (selectedOptionId == opt1.getId()) {
-                        selectedOptionNumber = 1;
-                    } else if (selectedOptionId == opt2.getId()) {
-                        selectedOptionNumber = 2;
-                    } else if (selectedOptionId == opt3.getId()) {
-                        selectedOptionNumber = 3;
-                    } else if (selectedOptionId == opt4.getId()) {
-                        selectedOptionNumber = 4;
-                    }
-                    selectedOption = findViewById(selectedOptionId);
-                    updateResponse(selectedOptionNumber);
-                } else {
-                    Toast.makeText(Paper.this, "You have not selected Anything: ", Toast.LENGTH_SHORT).show();
+            if (selectedOptionId != -1) {
+                int selectedOptionNumber = -100;
+                if (selectedOptionId == opt1.getId()) {
+                    selectedOptionNumber = 1;
+                } else if (selectedOptionId == opt2.getId()) {
+                    selectedOptionNumber = 2;
+                } else if (selectedOptionId == opt3.getId()) {
+                    selectedOptionNumber = 3;
+                } else if (selectedOptionId == opt4.getId()) {
+                    selectedOptionNumber = 4;
                 }
+                selectedOption = findViewById(selectedOptionId);
+                clearResponse();
+            } else {
+                Toast.makeText(Paper.this, "You have not selected Anything: ", Toast.LENGTH_SHORT).show();
             }
+
         });
-        clearResponseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int selectedOptionId = radioGroup.getCheckedRadioButtonId();
-
-
-                if (selectedOptionId != -1) {
-                    int selectedOptionNumber = -100;
-                    if (selectedOptionId == opt1.getId()) {
-                        selectedOptionNumber = 1;
-                    } else if (selectedOptionId == opt2.getId()) {
-                        selectedOptionNumber = 2;
-                    } else if (selectedOptionId == opt3.getId()) {
-                        selectedOptionNumber = 3;
-                    } else if (selectedOptionId == opt4.getId()) {
-                        selectedOptionNumber = 4;
-                    }
-                    selectedOption = findViewById(selectedOptionId);
-                    clearResponse(selectedOptionNumber);
-                } else {
-                    Toast.makeText(Paper.this, "You have not selected Anything: ", Toast.LENGTH_SHORT).show();
-                }
-
+        nextQuestion.setOnClickListener(view -> {
+            if (currentPosition < questionArrayList.size()) {
+                currentPosition = currentPosition + 1;
+                setQuestion(currentPosition);
+            } else {
+                setQuestion(currentPosition);
             }
+
         });
-        nextQuestion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (currentPosition < questionArrayList.size()) {
-                    currentPosition = currentPosition + 1;
-                    setQuestion(currentPosition);
-                } else {
-                    setQuestion(currentPosition);
-                }
-
-            }
-        });
-        submitExam.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                ProgressDialog dialog = ProgressDialog.show(Paper.this, "",
-                        "Loading. Please wait...", true);
-                Intent myIntent = new Intent(Paper.this, Result.class);
-                myIntent.putExtra("paperId", paperId);
-                myIntent.putExtra("userId", userId);
-                myIntent.putExtra("UserToken", UserToken);
-                myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(myIntent);
-                dialog.dismiss();
-            }
+        submitExam.setOnClickListener(v -> {
+            ProgressDialog dialog = ProgressDialog.show(Paper.this, "",
+                    "Loading. Please wait...", true);
+            Intent myIntent = new Intent(Paper.this, Result.class);
+            myIntent.putExtra("paperId", paperId);
+            myIntent.putExtra("userId", userId);
+            myIntent.putExtra("UserToken", UserToken);
+            myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(myIntent);
+            dialog.dismiss();
         });
 
 
@@ -178,7 +161,8 @@ public class Paper extends AppCompatActivity {
 
 
     private void startCountDown() {
-        CountDownTimer countDownTimer = new CountDownTimer(examTime* 60 * 1000, 1000) {
+        CountDownTimer countDownTimer = new CountDownTimer((long) examTime * 60 * 1000, 1000) {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -190,31 +174,29 @@ public class Paper extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                showSucessAlert("!!Time Over Please Submit Your Exam !!!");
+                showSucessAlert();
             }
         }.start();
     }
 
-    private void showSucessAlert(String message) {
+    private void showSucessAlert() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder((this));
-        builder1.setMessage(message);
+        builder1.setMessage("!!Time Over Please Submit Your Exam !!!");
         builder1.setCancelable(false);
 
         builder1.setPositiveButton(
                 "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
+                (dialog, id) -> {
+                    dialog.cancel();
 
-                        Intent myIntent = new Intent(Paper.this, Result.class);
-                        myIntent.putExtra("paperId", paperId);
-                        myIntent.putExtra("userId", userId);
-                        myIntent.putExtra("UserToken", UserToken);
-                        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(myIntent);
+                    Intent myIntent = new Intent(Paper.this, Result.class);
+                    myIntent.putExtra("paperId", paperId);
+                    myIntent.putExtra("userId", userId);
+                    myIntent.putExtra("UserToken", UserToken);
+                    myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(myIntent);
 
 
-                    }
                 });
 
 
@@ -314,7 +296,7 @@ public class Paper extends AppCompatActivity {
     }
 
     //Delete Response from server
-    private void clearResponse(int selectedOptionNumber) {
+    private void clearResponse() {
         ProgressDialog dialog = ProgressDialog.show(Paper.this, "",
                 "Loading. Please wait...", true);
         AndroidNetworking.initialize(this);
@@ -471,34 +453,9 @@ public class Paper extends AppCompatActivity {
                 .setTitle("Closing Exam Alert")
                 .setIcon(R.drawable.baseline_warning_24)
                 .setMessage("Are you sure you want to close this Exam?, Only successfully submitted Response will be counted for Calculating your Exam Result")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-
-                })
+                .setPositiveButton("Yes", (dialog, which) -> finish())
                 .setNegativeButton("No", null)
                 .show();
-    }
-
-    public void setUpNextQuestion(int position) {
-        currentQuestionId = -100;
-        currentPosition = position;
-        radioGroup.clearCheck();
-        currentQuestionId = questionArrayList.get(position).id;
-        //Toast.makeText(Paper.this, String.valueOf(currentQuestionId), Toast.LENGTH_SHORT).show();
-        question_no.setText(getString(R.string.q_no, String.valueOf(questionArrayList.get(position).question_no)));
-        question.setText(questionArrayList.get(position).question);
-        animateQuestion(question);
-        opt1.setText(questionArrayList.get(position).option1);
-        animateOption(opt1);
-        opt2.setText(questionArrayList.get(position).option2);
-        animateOption(opt2);
-        opt3.setText(questionArrayList.get(position).option3);
-        animateOption(opt3);
-        opt4.setText(questionArrayList.get(position).option4);
-        animateOption(opt4);
     }
 
 

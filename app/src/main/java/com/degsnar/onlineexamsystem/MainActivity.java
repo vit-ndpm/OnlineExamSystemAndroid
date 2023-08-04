@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                                             editor.putString("userName", (String) response.getJSONObject("user-data").getString("name"));
                                             editor.putString("userEmail", (String) response.getJSONObject("user-data").getString("email"));
                                             editor.putString("userMobile", (String) response.getJSONObject("user-data").getString("mobile"));
+                                            editor.putString("password",passwordtxt );
                                             editor.commit();
                                             Intent intent = new Intent(MainActivity.this, Home.class);
                                             startActivity(intent);
@@ -162,9 +163,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        email = findViewById(R.id.email);
-        password = findViewById(R.id.password);
-        loginButton = findViewById(R.id.loginButton);
+        email = findViewById(R.id.newPasswordET);
+        password = findViewById(R.id.confirm_passwordET);
+        loginButton = findViewById(R.id.changePasswordBtn);
         registerButton = findViewById(R.id.register);
         forgetPassword = findViewById(R.id.forgetPassword);
         progressBar = findViewById(R.id.myProgressBar);

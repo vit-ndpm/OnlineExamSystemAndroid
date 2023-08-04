@@ -44,14 +44,14 @@
             android:textAlignment="center"
             app:flow_horizontalAlign="start"
             app:flow_verticalAlign="center"
-            app:layout_constraintBottom_toTopOf="@+id/email"
+            app:layout_constraintBottom_toTopOf="@+id/newPasswordET"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.507"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
         <EditText
-            android:id="@+id/email"
+            android:id="@+id/newPasswordET"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -68,14 +68,14 @@
             android:textAlignment="center"
             app:flow_horizontalAlign="start"
             app:flow_verticalAlign="center"
-            app:layout_constraintBottom_toTopOf="@+id/password"
+            app:layout_constraintBottom_toTopOf="@+id/confirm_passwordET"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.507"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name" />
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/confirm_passwordET"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -96,7 +96,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/email" />
+            app:layout_constraintTop_toBottomOf="@+id/newPasswordET" />
 
         <EditText
             android:id="@+id/password_confirmatin"
@@ -121,7 +121,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password" />
+            app:layout_constraintTop_toBottomOf="@+id/confirm_passwordET" />
 
 
         <EditText

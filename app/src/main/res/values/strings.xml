@@ -19,4 +19,18 @@
     <string name="go_to_home_page">Go to Home Page</string>
     <string name="result_summary">Result Summary</string>
     <string name="see_detailed_report"> See Report</string>
+    <string name="enter_current_password">Enter Current Password</string>
+    <string name="change_password">Change Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="enter_new_password">Enter New Password</string>
+    <string name="home">Home</string>
+    <string name="todo">TODO</string>
+    <string name="user_profile">User Profile</string>
+    <string name="name">Name:</string>
+    <string name="email">Email:</string>
+    <string name="mobile">Mobile:</string>
+    <string name="textview">TextView</string>
+    <string name="engg_it_sk_gmail_com">engg.it.sk@gmail.com</string>
+    <string name="_9425966696">9425966696</string>
+    <string name="sandeep_kumar_chaurasiya">Sandeep Kumar Chaurasiya</string>
 </resources>

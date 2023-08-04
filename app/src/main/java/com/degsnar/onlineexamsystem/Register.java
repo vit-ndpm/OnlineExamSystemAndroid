@@ -128,8 +128,8 @@ public class Register extends AppCompatActivity {
 
     private void initViews() {
         nameEt = findViewById(R.id.name);
-        emailEt = findViewById(R.id.email);
-        passwordEt = findViewById(R.id.password);
+        emailEt = findViewById(R.id.newPasswordET);
+        passwordEt = findViewById(R.id.confirm_passwordET);
         password_confirmationEt = findViewById(R.id.password_confirmatin);
         phoneEt = findViewById(R.id.phone);
         progressBar = findViewById(R.id.myProgressBar);

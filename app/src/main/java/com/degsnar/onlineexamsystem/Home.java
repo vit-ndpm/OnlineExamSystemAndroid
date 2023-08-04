@@ -8,9 +8,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,18 +31,20 @@ public class Home extends AppCompatActivity {
     Toolbar toolbar;
     ArrayList<Exam> examArrayList;
     RecyclerView examRecyclerView;
-    ProgressBar home_progressBar;
+
+    boolean loginStatus=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         examRecyclerView=findViewById(R.id.examsRecyclerView);
 
         examRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         //setup toolbar here
         toolbar = findViewById(R.id.home_toolbar);
-        examArrayList=new ArrayList<Exam>();
+        examArrayList= new ArrayList<>();
         fillExamArrayList();
 
         setSupportActionBar(toolbar);
@@ -57,7 +56,6 @@ public class Home extends AppCompatActivity {
                 "Loading. Please wait...", true);
 
         SharedPreferences myPref = getSharedPreferences("userData", MODE_PRIVATE);
-        SharedPreferences.Editor editor = myPref.edit();
         if (myPref.contains("token")) {
             String token = myPref.getString("token", null);
 
@@ -117,9 +115,9 @@ public class Home extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId=item.getItemId();
         if (itemId==R.id.profile){
-
+            showProfile();
         } else if (itemId==R.id.changePassword) {
-
+                    changePassword();
         } else if (itemId==R.id.refresh) {
             fillExamArrayList();
         }else if (itemId==R.id.logout) {
@@ -127,6 +125,17 @@ public class Home extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void showProfile() {
+        Intent intent=new Intent(Home.this,UserProfile.class);
+        startActivity(intent);
+    }
+
+    private void changePassword() {
+        Intent intent=new Intent(Home.this,ChangePassword.class);
+        startActivity(intent);
+    }
+
     public void logout(){
         SharedPreferences myPref = getSharedPreferences("userData", MODE_PRIVATE);
         SharedPreferences.Editor editor = myPref.edit();
@@ -146,7 +155,7 @@ public class Home extends AppCompatActivity {
                             Toast.makeText(Home.this, response.toString(), Toast.LENGTH_SHORT).show();
                             Log.d("Response", response.toString());
                             editor.remove("token");
-                            editor.commit();
+                            editor.apply();
                             Intent intent = new Intent(Home.this, MainActivity.class);
                             startActivity(intent);
                             finish();
@@ -159,5 +168,53 @@ public class Home extends AppCompatActivity {
                     });
         }
 
+    }
+
+    boolean login(String email, String password) {
+        String url = "https://exam.vinayakinfotech.co.in/api/login";
+        AndroidNetworking.post(url).addBodyParameter("email", email)
+                .addBodyParameter("password", password)
+                .addHeaders("accept", "application/json")
+                .build().
+                getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+
+                            if (response.getString("status").equals("success")) {
+//                                SharedPreferences myPref = getSharedPreferences("userData", MODE_PRIVATE);
+//                                SharedPreferences.Editor editor = myPref.edit();
+//
+//                                editor.putString("token", (String) response.get("token"));
+//                                editor.putInt("userId", response.getJSONObject("user-data").getInt("id"));
+//                                editor.putString("userName", (String) response.getJSONObject("user-data").getString("name"));
+//                                editor.putString("userEmail", (String) response.getJSONObject("user-data").getString("email"));
+//                                editor.putString("userMobile", (String) response.getJSONObject("user-data").getString("mobile"));
+//                                editor.putString("password",password );
+//                                editor.commit();
+//
+                                loginStatus = true;
+
+                                //finish the activity so that user will not come to login screen again on back button press
+                                finish();
+                            } else if (response.getString("status").equals("failed")) {
+                                Toast.makeText(Home.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+                                loginStatus = false;
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Toast.makeText(Home.this, anError.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        loginStatus = false;
+                    }
+                });
+        return loginStatus;
     }
 }
