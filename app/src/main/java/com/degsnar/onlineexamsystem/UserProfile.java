@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -32,6 +33,8 @@ private  static  final int CAMERA_REQUEST=1888;
     TextView userName, userEmail, userMobile, userToken;
     ImageView profilePic, captureImage;
     Button homeBtn;
+    SharedPreferences myPref;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +47,19 @@ private  static  final int CAMERA_REQUEST=1888;
         profilePic = findViewById(R.id.profileImage);
         captureImage = findViewById(R.id.captureImage);
         homeBtn = findViewById(R.id.homeBtn);
-        SharedPreferences myPref = getSharedPreferences("userData", MODE_PRIVATE);
+         myPref = getSharedPreferences("userData", MODE_PRIVATE);
+         editor=myPref.edit();
         String name = myPref.getString("userName", null);
         String email = myPref.getString("userEmail", null);
         String mobile = myPref.getString("userMobile", null);
         String token = myPref.getString("token", null);
+
         userName.setText(name);
         userEmail.setText(email);
         userMobile.setText(mobile);
         userToken.setText(token);
+        if (myPref.contains("profilePic")){        profilePic.setImageURI(Uri.parse(myPref.getString("profilePic",null)));
+        }
         homeBtn.setOnClickListener(v -> {
             Intent myIntent = new Intent(UserProfile.this, Home.class);
             startActivity(myIntent);
@@ -66,10 +73,12 @@ private  static  final int CAMERA_REQUEST=1888;
             public void onClick(View v) {
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
             }
 
 
         });
+
 
 
     }
@@ -77,8 +86,18 @@ private  static  final int CAMERA_REQUEST=1888;
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            profilePic.setImageBitmap(photo);
+            Uri uri=getImageUri(UserProfile.this,photo);
+            Toast.makeText(this, "URI at Start: "+uri.toString(), Toast.LENGTH_SHORT).show();
+             editor.putString("profilePic", String.valueOf(uri));
+            editor.apply();
+            profilePic.setImageURI(Uri.parse(myPref.getString("profilePic",null)));
         }
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 }
 
