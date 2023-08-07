@@ -31,26 +31,28 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class Paper extends AppCompatActivity {
-    int paperId;
+
     String UserToken;
     int userId;
     int currentQuestionId;
     int currentPosition = 0;
     int examTime;
-
+    int paperId;
+    boolean isFirstQuestion = false;
     RecyclerView recyPaper;
     TextView question_no, question, timer;
     Button submitResponse, nextQuestion, updateResponseBtn, clearResponseBtn, submitExam;
     RadioGroup radioGroup;
     RadioButton opt1, opt2, opt3, opt4, selectedOption;
     ArrayList<Question> questionArrayList;
+    ArrayList<UserResponse> responseArrayList;
     QuestionRecyclerAdapter questionRecyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper);
-        examTime=30;
+        examTime = 30;
         //Get paperId from Bundle
         Intent iin = getIntent();
         Bundle b = iin.getExtras();
@@ -62,17 +64,14 @@ public class Paper extends AppCompatActivity {
         startCountDown();
         //initialize views
         initViews();
-
         recyPaper.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
         questionArrayList = new ArrayList<>();
+        responseArrayList = new ArrayList<>();
         fillQuestionsList();
 
         submitResponse.setOnClickListener(view -> {
 
             int selectedOptionId = radioGroup.getCheckedRadioButtonId();
-
-
             if (selectedOptionId != -1) {
                 int selectedOptionNumber = -100;
                 if (selectedOptionId == opt1.getId()) {
@@ -90,12 +89,9 @@ public class Paper extends AppCompatActivity {
                 Toast.makeText(Paper.this, "You have not selected Anything: ", Toast.LENGTH_SHORT).show();
             }
 
-
         });
         updateResponseBtn.setOnClickListener(view -> {
             int selectedOptionId = radioGroup.getCheckedRadioButtonId();
-
-
             if (selectedOptionId != -1) {
                 int selectedOptionNumber = -100;
                 if (selectedOptionId == opt1.getId()) {
@@ -139,6 +135,7 @@ public class Paper extends AppCompatActivity {
             if (currentPosition < questionArrayList.size()) {
                 currentPosition = currentPosition + 1;
                 setQuestion(currentPosition);
+
             } else {
                 setQuestion(currentPosition);
             }
@@ -155,6 +152,80 @@ public class Paper extends AppCompatActivity {
             startActivity(myIntent);
             dialog.dismiss();
         });
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                //Toast.makeText(Paper.this, "Group: "+group+"\n checkedId : "+checkedId, Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+    private int responsePresentInDatabase(int currentPosition) {
+        Question currentQuestion = questionArrayList.get(currentPosition);
+        int returnValue = -100;
+        getAllResponse();
+        if (responseArrayList.size() > 0) {
+            for (int i = 0; i < responseArrayList.size(); i++) {
+                if (currentQuestion.id == responseArrayList.get(i).question_id) {
+                    returnValue = responseArrayList.get(i).selected_option;
+
+                }
+            }
+
+
+        }
+        return returnValue;
+    }
+
+    private void getAllResponse() {
+        ProgressDialog dialog = ProgressDialog.show(Paper.this, "",
+                "Loading. Please wait checking Response...", true);
+        AndroidNetworking.initialize(this);
+        String url = "https://exam.vinayakinfotech.co.in/api/getAllResponse";
+        AndroidNetworking.get(url)
+                .setPriority(Priority.HIGH)
+                .addHeaders("accept", "application/json")
+                .addHeaders("Authorization", "Bearer " + UserToken)
+                .addQueryParameter("user_id", String.valueOf(userId))
+                .addQueryParameter("paper_id", String.valueOf(paperId))
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+
+                            if (response.getString("status").equals("success")) {
+                                JSONArray allResponses = response.getJSONArray("responses");
+                                for (int i = 0; i < allResponses.length(); i++) {
+                                    UserResponse userResponse = new UserResponse();
+                                    JSONObject singleResponse = allResponses.getJSONObject(i);
+                                    userResponse.setId(singleResponse.getInt("id"));
+                                    userResponse.setUser_id(singleResponse.getInt("user_id"));
+                                    userResponse.setQuestion_id(singleResponse.getInt("question_id"));
+                                    userResponse.setPaper_id(singleResponse.getInt("paper_id"));
+                                    userResponse.setSelected_option(singleResponse.getInt("selected_option"));
+                                    responseArrayList.add(userResponse);
+                                }
+
+
+                            } else if (response.getString("status").equals("failed")) {
+                                Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+
+                            }
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.d("Error", anError.getLocalizedMessage());
+                        Toast.makeText(Paper.this, anError.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
 
 
     }
@@ -169,6 +240,11 @@ public class Paper extends AppCompatActivity {
                 int min = (int) (millisUntilFinished / (1000 * 60));
                 int sec = (int) (millisUntilFinished - min * 1000 * 60) / 1000;
                 timer.setText(min + ":" + sec);
+                if (isFirstQuestion) {
+                    setQuestion(0);
+                    isFirstQuestion = false;
+                }
+
 
             }
 
@@ -379,6 +455,7 @@ public class Paper extends AppCompatActivity {
                                             question.setDescription(jsonObject.getString("description"));
                                             questionArrayList.add(question);
                                         }
+                                        isFirstQuestion = true;
                                         questionRecyclerAdapter = new QuestionRecyclerAdapter(getApplicationContext(), questionArrayList) {
 
 
@@ -480,6 +557,45 @@ public class Paper extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Reached to Last Question:" + currentPosition + " Please On Question Number to see Questions or you can Submit Exam", Toast.LENGTH_LONG).show();
             currentPosition = questionArrayList.size() - 1;
+        }
+        int responseValue = responsePresentInDatabase(currentPosition);
+        Toast.makeText(this, String.valueOf(responseValue), Toast.LENGTH_SHORT).show();
+        if (responsePresentInDatabase(currentPosition) > 0) {
+            switch (responseValue) {
+                case 1:
+                    opt1.setChecked(true);
+                    opt2.setChecked(false);
+                    opt3.setChecked(false);
+                    opt4.setChecked(false);
+                    Toast.makeText(this, "1", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    opt1.setChecked(false);
+                    opt2.setChecked(true);
+                    opt3.setChecked(false);
+                    opt4.setChecked(false);
+                    Toast.makeText(this, "2", Toast.LENGTH_SHORT).show();
+                    break;
+                case 3:
+                    opt1.setChecked(false);
+                    opt2.setChecked(false);
+                    opt3.setChecked(true);
+                    opt4.setChecked(false);
+                    Toast.makeText(this, "3", Toast.LENGTH_SHORT).show();
+                    break;
+                case 4:
+                    opt1.setChecked(false);
+                    opt2.setChecked(false);
+                    opt3.setChecked(false);
+                    opt4.setChecked(true);
+                    Toast.makeText(this, "4", Toast.LENGTH_SHORT).show();
+                default:
+                    opt1.setChecked(false);
+                    opt2.setChecked(false);
+                    opt3.setChecked(false);
+                    opt4.setChecked(false);
+                    break;
+            }
         }
 
     }

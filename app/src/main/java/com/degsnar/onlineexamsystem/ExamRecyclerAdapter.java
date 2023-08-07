@@ -74,7 +74,6 @@ public class ExamRecyclerAdapter extends RecyclerView.Adapter<ExamRecyclerAdapte
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 view.getContext().startActivity(myIntent);
 
-
             }
         });
     }
