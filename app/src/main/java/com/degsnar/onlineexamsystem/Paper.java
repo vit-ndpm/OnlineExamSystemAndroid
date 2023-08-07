@@ -162,6 +162,7 @@ public class Paper extends AppCompatActivity {
     }
 
     private int responsePresentInDatabase(int currentPosition) {
+
         Question currentQuestion = questionArrayList.get(currentPosition);
         int returnValue = -100;
         getAllResponse();
@@ -195,6 +196,7 @@ public class Paper extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
 
                         try {
+                            responseArrayList.clear();
 
                             if (response.getString("status").equals("success")) {
                                 JSONArray allResponses = response.getJSONArray("responses");
@@ -212,10 +214,14 @@ public class Paper extends AppCompatActivity {
 
                             } else if (response.getString("status").equals("failed")) {
                                 Toast.makeText(Paper.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+
 
                             }
                         } catch (JSONException e) {
+                            dialog.dismiss();
                             throw new RuntimeException(e);
+
                         }
                         dialog.dismiss();
                     }
@@ -224,6 +230,7 @@ public class Paper extends AppCompatActivity {
                     public void onError(ANError anError) {
                         Log.d("Error", anError.getLocalizedMessage());
                         Toast.makeText(Paper.this, anError.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
                 });
 
@@ -557,9 +564,50 @@ public class Paper extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Reached to Last Question:" + currentPosition + " Please On Question Number to see Questions or you can Submit Exam", Toast.LENGTH_LONG).show();
             currentPosition = questionArrayList.size() - 1;
+            int responseValue = responsePresentInDatabase(currentPosition);
+            Toast.makeText(this, String.valueOf(responseValue), Toast.LENGTH_SHORT).show();
+            if (responsePresentInDatabase(currentPosition) > 0) {
+                switch (responseValue) {
+                    case 1:
+                        opt1.setChecked(true);
+                        opt2.setChecked(false);
+                        opt3.setChecked(false);
+                        opt4.setChecked(false);
+//                        Toast.makeText(this, "1", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 2:
+                        opt1.setChecked(false);
+                        opt2.setChecked(true);
+                        opt3.setChecked(false);
+                        opt4.setChecked(false);
+//                        Toast.makeText(this, "2", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 3:
+                        opt1.setChecked(false);
+                        opt2.setChecked(false);
+                        opt3.setChecked(true);
+                        opt4.setChecked(false);
+//                        Toast.makeText(this, "3", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 4:
+                        opt1.setChecked(false);
+                        opt2.setChecked(false);
+                        opt3.setChecked(false);
+                        opt4.setChecked(true);
+//                        Toast.makeText(this, "4", Toast.LENGTH_SHORT).show();
+                    default:
+                        opt1.setChecked(false);
+                        opt2.setChecked(false);
+                        opt3.setChecked(false);
+                        opt4.setChecked(false);
+                        break;
+                }
+            }
         }
+
+        //Check for respone presence in Database and if present mark the option selected as checked
         int responseValue = responsePresentInDatabase(currentPosition);
-        Toast.makeText(this, String.valueOf(responseValue), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, String.valueOf(responseValue), Toast.LENGTH_SHORT).show();
         if (responsePresentInDatabase(currentPosition) > 0) {
             switch (responseValue) {
                 case 1:
